@@ -1,0 +1,47 @@
+BenOS v1.0 interrupt code (c) Benjamin Hoyt 1997
+
+Whenever BenOS receives one of the following exceptions it simply
+(re)enables interrupts and THROWs a value directly associated with
+that exception. The interrupt numbers for these exceptions are as
+follows:
+
+int#	description
+----	-----------
+00		divide overflow or divide by zero
+01		hardware breakpoint or trace trap
+02		non-maskable interrupt
+03		software breakpoint (INT 3, opcode CC)
+04		overflow interrupt (for INTO instruction)
+05		BOUND instruction exception
+06		invalid opcode
+07		device (FPU) not available
+08		double fault
+09		coprocessor segment overrun
+0A		invalid TSS
+0B		segment not present
+0C		stack fault
+0D		general protection fault
+0E		page fault
+0F		reserved
+10		coprocessor error
+11-1F	reserved for future expansion
+
+BenOS maps the hardware IRQs (00-0F) from the 8259 to the CPU
+interrupts 20-2F so they don't coincide with the above exceptions.
+Hardware IRQs are as follows:
+
+IRQ#	description
+----	-----------
+00		timer (8254)
+01		keyboard (8042)
+02		cascade from PIC slave
+03		COM2 serial port
+04		COM1 serial port
+05		LPT2 printer port
+06		floppy disk controller
+07		LPT1 printer port
+08		CMOS clock
+09-0C	unused
+0D		math coprocessor
+0E		hard disk controller
+0F		unused

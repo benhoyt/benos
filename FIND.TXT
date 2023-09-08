@@ -1,0 +1,53 @@
+BenOS v1.0 search order and word find routines (c) Benjamin Hoyt 1997
+
+A header in the BenOS Forth dictionary structure is as follows:
+
+offset	size	description
+------	----	-----------
+0		cell	link, pointer to link cell of previous definition
+4		char	type, immediate and restrict bits as well as type of word
+5		char*n	name, in the form of a Forth counted string
+
+After the name there are possible alignment bytes and then follows
+the code for the word.
+
+The bits in the type field, a byte, of the header structure are as
+follows:
+
+bits	name		description
+----	----		-----------
+0		immediate	bit set denotes an immediate word
+1		restrict	bit set denotes a compile-only word
+2-7		reserved	reserved for future use (leave clear)
+
+Many of these words return an hp, header pointer, or xt, execution
+token, and 1 or -1. 1 is returned if the word found is an immediate
+word. -1 is returned if the word found is not an immediate word. 0
+is returned if the name is not found.
+
+A wid is a wordlist identification token. In BenOS Forth the wid
+points to a vocabulary structure.
+
+offset	size	description
+------	----	-----------
+0		cell	hash, pointer to this vocabulary's hash table
+4		cell	link, pointer to hash cell of previous vocabulary
+8		cell	head, pointer to this vocabulary's header, or 0
+
+The hash table structure is as follows:
+
+offset	size	description
+------	----	-----------
+0		cell	#threads, the number of hash chains in the table following
+4		n		the hash chains, n is equal to "#threads cells"
+
+BenOS Forth uses a hashing algorithm on every name to get an entry
+into the hash table described above. After the following procedure
+is undergone, the returned value is MODed by the #threads in the
+wordlist to be searched giving an entry directly into the hash chain
+table. Here is the algorithm:
+
+for 3 or more chars:	1st 3 *  2nd + 2 *  2nd + 3rd +  2 * length +
+for 2 chars:			1st 3 *  2nd +  2 * length +
+for 1 char:				2 * length +
+for 0 chars:			0

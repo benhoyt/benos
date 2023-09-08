@@ -1,0 +1,22 @@
+BenOS v1.0 Forth and OS kernel (c) Benjamin Hoyt 1998
+
+BenOS, a hobbyist project, is a small Forth operating system. BenOS
+(because it's Forth) uses Reverse Polish Notation (RPN), so operands
+come before operations. "0 LIST" will list block zero, 0 pushing the
+number zero onto the stack and LIST displaying it's contents. A few
+commands are listed below:
+
+command    stack effect       example     description
+컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
+help       --                 help        display a brief help page
+reboot     --                 reboot      reboot the system
+list       block --           4 list      display a block
+edit       block --           1 edit      edit a block
++          n1 n2 -- sum       3 4 +       add n1 and n2 giving sum (7)
+.          n --               5 6 * .     display a number (30)
+
+Note: EDIT invokes the block editor, the code for which is not yet
+      loaded. Type "4 12 thru" to load the editor.
+
+Try: "status on" to turn on the top-of-screen status line, or
+     "13 14 thru eat" for a little demo, "full" to stop it

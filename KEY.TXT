@@ -1,0 +1,297 @@
+BenOS v1.0 keyboard driver code (c) Benjamin Hoyt 1997
+
+The keyboard event handlers ekey ekey? and ekey>char can point to
+one of two sets of functions. The raw keyboard event system (rkey)
+and the cooked event system (ckey). Use the words raw-keys and
+cooked-keys to switch between the two, and cooking? to determine
+whether the keys are being oven cooked or not. The two systems are
+described below.
+
+rkey waits for a keyboard event and returns with the code when an
+event occurs. A raw keyboard event occurs when any key is pressed or
+released or held down to give a repeat code. The repeat code is the
+same as the previous code. Code returned by rkey is a 32 bit value
+divided up as follows:
+
+byte 0:	bits 0-6	nonzero rkey code, unique for each key, see below for list
+		bit  7		clear = key pressed, set = key released
+byte 1:	bit  0		left shift status, set = shift down
+		bit  1		right shift status, set = shift down
+		bit  2		left ctrl status, set = ctrl down
+		bit  3		right ctrl status, set = ctrl down
+		bit  4		left alt status, set = alt down
+		bit  5		right alt status, set = alt down
+		bits 6-7	reserved, always zero
+byte 2:	bit  0		scroll lock status, set = scroll lock on
+		bit  1		num lock status, set = num lock on
+		bit  2		caps lock status, set = caps lock on
+		bits 3-7	reserved, always zero
+byte 3:	bits 0-7	reserved, always zero
+
+The nonzero rkey codes in bits 0-6 of byte 0 are as follows: (rkey
+eliminates the silly E0 prefix, so with the exception of the E0
+prefixed keys the rkey values are simply the hardware keyboard scan
+codes.)
+
+	key				rkey code
+	---				---------
+	escape			01
+	1	!			02
+	2	@			03
+	3	#			04
+	4	$			05
+	5	%			06
+	6	^			07
+	7	&			08
+	8	*			09
+	9	(			0A
+	0	)			0B
+	-	_			0C
+	=	+			0D
+	back space		0E
+	tab				0F
+	q	Q			10
+	w	W			11
+	e	E			12
+	r	R			13
+	t	T			14
+	y	Y			15
+	u	U			16
+	i	I			17
+	o	O			18
+	p	P			19
+	[	{			1A
+	]	}			1B
+	enter			1C
+	left ctrl		1D
+	a	A			1E
+	s	S			1F
+	d	D			20
+	f	F			21
+	g	G			22
+	h	H			23
+	j	J			24
+	k	K			25
+	l	L			26
+	;	:			27
+	'	"			28
+	`	~			29
+	left shift		2A
+	\	|			2B
+	z	Z			2C
+	x	X			2D
+	c	C			2E
+	v	V			2F
+	b	B			30
+	n	N			31
+	m	M			32
+	,	<			33
+	.	>			34
+	/	?			35
+	right shift		36
+	pad *			37
+	left alt		38
+	space			39
+	caps lock		3A
+	F1				3B
+	F2				3C
+	F3				3D
+	F4				3E
+	F5				3F
+	F6				40
+	F7				41
+	F8				42
+	F9				43
+	F10				44
+	num lock		45
+	scroll lock		46
+	pad home		47
+	pad up			48
+	pad page up		49
+	pad -			4A
+	pad left		4B
+	pad 5			4C
+	pad right		4D
+	pad +			4E
+	pad end			4F
+	pad down		50
+	pad page down	51
+	pad insert		52
+	pad delete		53
+	F11				57
+	F12				58
+	grey insert		60	(E0 52)
+	grey delete		61	(E0 53)
+	grey home		62	(E0 47)
+	grey end		63	(E0 4F)
+	grey page up	64	(E0 49)
+	grey page down	65	(E0 51)
+	grey up			66	(E0 48)
+	grey down		67	(E0 50)
+	grey left		68	(E0 4B)
+	grey right		69	(E0 4D)
+	grey slash		6A	(E0 35)
+	grey enter		6B	(E0 1C)
+	right alt		6C	(E0 38)
+	right ctrl		6D	(E0 1D)
+
+ckey waits for a key press or repeat. A ckey event occurs when an
+editing key is pressed or repeated (but not released). A ckey event
+does not occur when any of the shift of lock keys are pressed or
+released. A ckey code is a 32 bit value divided up as follows:
+
+byte 0:	bits 0-6	nonzero ckey code, NOT unique for each key, see list below
+		bit  7		clear = ASCII ckey code, set = non-ASCII ckey code
+byte 1:	bit  0		left shift status, set = shift down
+		bit  1		right shift status, set = shift down
+		bit  2		left ctrl status, set = ctrl down
+		bit  3		right ctrl status, set = ctrl down
+		bit  4		left alt status, set = alt down
+		bit  5		right alt status, set = alt down
+		bits 6-7	reserved, always zero
+byte 2:	bit  0		scroll lock status, set = scroll lock on
+		bit  1		num lock status, set = num lock on
+		bit  2		caps lock status, set = caps lock on
+		bits 3-7	reserved, always zero
+byte 3:	bits 0-6	reserved, always zero
+		bit  7		set = key from number pad, clear = not from number pad
+
+When the ASCII bit (byte 0, bit 7) is clear, the ckey code is as
+follows:
+
+	key				ckey code
+	---				---------
+	back space		08
+	tab				09
+	enter			0D
+	escape			1B
+	space			20
+	'	"			27
+	,	<			2C
+	-	_			2D
+	.	>			2E
+	/	?			2F
+	0	!			30
+	1	@			31
+	2	#			32
+	3	$			33
+	4	%			34
+	5	^			35
+	6	&			36
+	7	*			37
+	8	(			38
+	9	)			39
+	;	:			3B
+	=	+			3D
+	[	{			5B
+	\	|			5C
+	]	}			5D
+	`	~			60
+	a	A			61
+	b	B			62
+	c	C			63
+	d	D			64
+	e	E			65
+	f	F			66
+	g	G			67
+	h	H			68
+	i	I			69
+	j	J			6A
+	k	K			6B
+	l	L			6C
+	m	M			6D
+	n	N			6E
+	o	O			6F
+	p	P			70
+	q	Q			71
+	r	R			72
+	s	S			73
+	t	T			74
+	u	U			75
+	v	V			76
+	w	W			77
+	x	X			78
+	y	Y			79
+	z	Z			7A
+
+When the ASCII bit is set, the ckey code is as follows (for keys that
+say "number pad or grey key" the number pad bit (byte 3, bit 7)
+determines whether the key is from the number pad or a grey key):
+
+	key				ckey code
+	---				---------
+	F1				01
+	F2				02
+	F3				03
+	F4				04
+	F5				05
+	F6				06
+	F7				07
+	F8				08
+	F9				09
+	F10				0A
+	F11				0B
+	F12				0C
+	insert			10		number pad or grey key
+	end				11		number pad or grey key
+	down			12		number pad or grey key
+	page down		13		number pad or grey key
+	left			14		number pad or grey key
+	centre			15		number pad only
+	right			16		number pad or grey key
+	home			17		number pad or grey key
+	up				18		number pad or grey key
+	page up			19		number pad or grey key
+	delete			1A		number pad or grey key
+	pad +			1B		number pad only
+	pad -			1C		number pad only
+	pad *			1D		number pad only
+	pad /			1E		number pad only
+	pad enter		1F		number pad only
+
+*** code for debugging keyboard interrupt handler
+
+$B8280 value kkk
+code q01-kbd							\ key int handler which prints codes
+	pushad								\ save regs
+	in		al, # $60					\ read scancode from keyboard
+	cmp		al, # $58					\ F12 pressed?
+	je		' reboot					\ yep, reboot the machine
+	mov		dl, al
+	mov		ecx, # 2
+	mov		edi, addr> kkk
+	mov		ah, # $1E
+1 @@:
+	rol		dl, # 4
+	mov		al, dl
+	and		al, # $0F
+	cmp		al, # 9
+	jbe		short 2 @@
+	add		al, # 7
+2 @@:
+	add		al, # '0
+	stosw
+	loop	1 @@
+	add		dword addr> kkk , # 6
+	mov		al, # $20					\ send EOI to 8259
+	out		# $20 , al
+	popad								\ restore regs and return from int
+	iretd
+end-code
+
+*** code to initialise keyboard controller, doesn't seem to work
+
+	mov		al, # $FA					\ set all keys to typematic make/break
+	call	' kout						\ send command to kbd
+
+	mov		al, # $F0					\ set scan code set to set # 2
+	call	' kout						\ send command
+	mov		al, # 2
+	call	' kout						\ followed by data byte
+
+	call	' kin-empty					\ wait for kbd input buffer to empty
+	mov		al, # $60					\ "set up to write 8042" command byte
+	out		# $64 , al					\ send command
+	call	' kin-empty					\ wait for kbd input buffer to empty
+	mov		al, # $45					\ enable PC/XT scancode translations
+	out		# $60 , al

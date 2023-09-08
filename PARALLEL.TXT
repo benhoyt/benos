@@ -1,0 +1,38 @@
+BenOS v1.0 parallel port driver (c) Benjamin Hoyt 1998
+
+This parallel port driver has a queue or buffer which user data is
+stored in before being sent to the parallel port. A background task
+actually sends the data. If the buffer is full when the user tries
+to send data he is given an I/O result of -275. lpt-emit and lpt-type
+are user words for sending data to the parallel port.
+
+The data output port (which is readable) bits 0-7 correspond directly
+to the pins on the parallel port 2-9. Data written to this port goes
+directly to the printer. The data port address is at lpt-port.
+
+The status register port is a readable port which gives various
+status information about the printer. The status port address is at
+lpt-port + 1. The following is a description of each status bit:
+
+bit#	description
+----	-----------
+0		set = time-out
+1-2		unused
+3		set = error (port pin 15)
+4		set = printer on-line (port pin 13)
+5		set = out of paper (port pin 12)
+6		clear = acknowledge (port pin 10)
+7		clear = busy (port pin 11)
+
+The control register is a writable port which controls various
+printer actions. The control port address is at lpt-port + 2. The
+following is a description of each control bit:
+
+bit#	description
+----	-----------
+0		set = output data to printer (port pin 1)
+1		set = auto line feed (port pin 14)
+2		clear = initialise printer (port pin 16)
+3		set = printer reads output (port pin 17)
+4		set = enable IRQ for acknowledge
+5-7		unused

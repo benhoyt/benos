@@ -1,0 +1,14 @@
+BenOS v1.0 memory and string routines (c) Benjamin Hoyt 1997
+
+Bits in the character type table chtypes are as follows:
+
+bit#	name	description
+----	----	-----------
+0		white	null, tab, LF, vertical tab, form feed, CR, space
+1		digit	'0 through '9
+2		hex		'A through 'F and 'a through 'f
+3		upper	'A through 'Z
+4		lower	'a through 'z
+5		ctrl	all control chars: null through $1F
+6		ascii	all low ASCII chars: null through $7F
+7		vctrl	video control chars: bell, back space, tab, LF, vtab, FF, CR

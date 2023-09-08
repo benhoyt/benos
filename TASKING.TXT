@@ -1,0 +1,16 @@
+BenOS v1.0 multitasking routines (c) Benjamin Hoyt 1998
+
+A tid or "task identifcation cell" is the memory address of a task's
+user variable table. This has in it the necessary things for every
+task: the data and return stack pointers and sizes, pointers to the
+next and previous tasks, and all the other user variables.
+
+Use start-task stop-task and sleep to handle multitasking. start-task
+takes an execution token and stack sizes, creates the task stacks and
+user variables, and adds the task to the task list, returning a tid
+cell. The execution token given to start-task is the word which will
+be executed when the task is started. If this word ever returns (with
+exit or ;) the task will be stopped as with stop-task. stop-task
+removes the task from the task list and frees up memory used by the
+task. sleep is a major part of the cooperative multitasking idea: it
+switches from the current task to the next one in the list.

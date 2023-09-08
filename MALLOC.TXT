@@ -1,0 +1,28 @@
+BenOS v1.0 memory allocation routines (c) Benjamin Hoyt 1997
+
+Each allocated memory block has a header 8 bytes before the block
+itself which is as follows:
+
+offset	size	description
+------	----	-----------
+-8		cell	the "magic" number $13579BDF used for error checking
+-4		cell	size, # of bytes in this allocated block, including this header
+ 0		size	the above # of bytes of allocated memory, size mod 4 always = 0
+
+Each free memory block has a header at 8 bytes before the block
+itself which is as follows:
+
+offset	size	description
+------	----	-----------
+-8		cell	link, pointer to previous free block in free-chain
+-4		cell	size, # of bytes in this free block, including this header
+ 0		size	the above # of bytes of free memory
+
+allocate simply looks down the free chain to find a block big enough
+to hold u bytes, and the high end of the first block large enough it
+finds will be used as the allocation area.
+
+free puts the given block back into the free chain, and if it's
+adjacent to one or two other free blocks it joins the whole thing
+into one big block. This makes for a reasonable and simplistic
+"garbage collection".

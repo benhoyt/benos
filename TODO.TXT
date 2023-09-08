@@ -1,0 +1,5 @@
+intcode.f
+	386 exception handling leaves something to be desired
+malloc.f
+	do init-memory properly
+	code Memory Wordset resize

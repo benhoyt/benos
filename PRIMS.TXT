@@ -1,0 +1,26 @@
+BenOS v1.0 code primitives (c) Benjamin Hoyt 1997
+
+Internally, BenOS Forth is a subroutine threaded Forth designed for
+speed and multitasking. Hence it uses the 386 hardware stack for the
+return stack, and for a data stack pointer it uses EBP. Also, EBX
+always holds the top item on the stack for a bit of stack cache.
+Register ESI is reserved for the user variable table pointer for
+speedy multitasking. Here is a register usage map:
+
+eax	= scratch
+ebx	= top item on stack
+ecx	= scratch
+edx	= scratch
+esi	= reserved for user pointer in task switching
+edi	= scratch
+ebp	= data stack pointer (see below)
+esp	= return stack pointer
+ cs	= read-only code segment, starts at physical 0, and is 4gb in size
+ ds	= read/write data segment, starts at physical 0, and is 4gb in size
+ es	= fs = gs = ss = same data segment as ds
+
+Please note that the phrase "1234 sp@" does NOT give you a pointer to
+the 1234 on the stack. This is because of how we are handling sp@ and
+sp! with EBX as the top-of-stack register. The phrase
+"1234 sp@ cell-" gives you a pointer to the 1234 on the stack. The
+return stack is not affected like this.
