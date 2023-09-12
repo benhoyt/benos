@@ -252,5 +252,5 @@ BootSig		dw	0aa5fh		; boot sector signature
 ; End of code segment and file
 ;
 Code		ends
-end
+end		JumpPadding
 ; ─────────────────────────────────────────────────────────────────────────────
